@@ -48,12 +48,6 @@ header h1 a {
   gap: 0.55rem;
 }
 
-.site-logo {
-  height: 1.8rem;
-  width: auto;
-  max-width: 120px;
-}
-
 nav {
   display: flex;
   gap: 1.75rem;
