@@ -51,6 +51,7 @@ header h1 a {
 .site-logo {
   height: 1.8rem;
   width: auto;
+  max-width: 120px;
 }
 
 nav {
@@ -324,6 +325,11 @@ footer {
 
   header h1 {
     font-size: 1.3rem;
+  }
+
+  .site-logo {
+    height: 1.3rem;
+    max-width: 80px;
   }
 
   nav {
