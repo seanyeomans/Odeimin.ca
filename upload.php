@@ -2,7 +2,7 @@
 // ── Configuration ────────────────────────────────────────────────
 define('UPLOAD_PASSWORD', 'CHANGE_ME');   // <-- set your password here
 define('MAX_SIZE_MB',     20);
-define('UPLOAD_DIR',      __DIR__ . '/images/');
+define('IMAGES_DIR',      __DIR__ . '/images/');
 // ─────────────────────────────────────────────────────────────────
 
 header('Content-Type: application/json');
@@ -69,20 +69,31 @@ if (!isset($mimeToExt[$mime])) {
 
 $ext = $mimeToExt[$mime];
 
+// Availability status
+$status = $_POST['status'] ?? 'available';
+if (!in_array($status, ['available', 'unavailable'], true)) {
+    $status = 'available';
+}
+
 // Build a clean, unique filename
 $original  = pathinfo($file['name'], PATHINFO_FILENAME);
 $safe      = preg_replace('/[^a-zA-Z0-9_-]/', '_', $original);
 $safe      = substr($safe, 0, 60);
 $timestamp = date('Ymd_His');
 $filename  = $timestamp . '_' . $safe . '.' . $ext;
-$dest      = UPLOAD_DIR . $filename;
 
-if (!is_dir(UPLOAD_DIR)) {
-    mkdir(UPLOAD_DIR, 0755, true);
+$uploadDir = IMAGES_DIR . $status . '/';
+if (!is_dir($uploadDir)) {
+    mkdir($uploadDir, 0755, true);
 }
+
+$dest = $uploadDir . $filename;
 
 if (!move_uploaded_file($file['tmp_name'], $dest)) {
     respond(false, 'Could not save file. Check server permissions.');
 }
 
-respond(true, 'Uploaded successfully.', ['file' => 'images/' . $filename]);
+respond(true, 'Uploaded successfully.', [
+    'file'   => 'images/' . $status . '/' . $filename,
+    'subdir' => $status,
+]);

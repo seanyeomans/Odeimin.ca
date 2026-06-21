@@ -22,10 +22,15 @@ if (!hash_equals(UPLOAD_PASSWORD, $password)) {
 }
 
 $filename = basename($_POST['filename'] ?? '');
-$subdir   = $_POST['subdir'] ?? '';
+$from     = $_POST['from'] ?? '';
+$to       = $_POST['to'] ?? '';
 
-if (!in_array($subdir, ['available', 'unavailable'], true)) {
-    respond(false, 'Invalid directory.');
+$valid = ['available', 'unavailable'];
+if (!in_array($from, $valid, true) || !in_array($to, $valid, true)) {
+    respond(false, 'Invalid status.');
+}
+if ($from === $to) {
+    respond(false, 'Source and destination are the same.');
 }
 
 if ($filename === '' || $filename === '.' || $filename === '..') {
@@ -35,25 +40,22 @@ if ($filename === '' || $filename === '.' || $filename === '..') {
 $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 $ext     = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 if (!in_array($ext, $allowed)) {
-    respond(false, 'Not a deletable file type.');
+    respond(false, 'Not a valid file type.');
 }
 
-$dir  = IMAGES_DIR . $subdir . '/';
-$path = $dir . $filename;
+$srcPath = IMAGES_DIR . $from . '/' . $filename;
+$destDir = IMAGES_DIR . $to . '/';
 
-// Confirm the resolved path is still inside the expected subdirectory
-$realDir  = realpath($dir) ?: '';
-$realPath = realpath($path) ?: '';
-if ($realDir === '' || $realPath === '' || strpos($realPath, $realDir) !== 0) {
-    respond(false, 'Invalid path.');
-}
-
-if (!file_exists($path)) {
+if (!file_exists($srcPath)) {
     respond(false, 'File not found.');
 }
 
-if (!unlink($path)) {
-    respond(false, 'Could not delete file. Check server permissions.');
+if (!is_dir($destDir)) {
+    mkdir($destDir, 0755, true);
 }
 
-respond(true, 'Deleted.');
+if (!rename($srcPath, $destDir . $filename)) {
+    respond(false, 'Could not move file. Check server permissions.');
+}
+
+respond(true, 'Status updated.');

@@ -39,12 +39,17 @@
         item.className = 'gallery-item';
 
         const el = document.createElement('img');
-        el.src   = img.src;
-        el.alt   = img.name;
+        el.src     = img.src;
+        el.alt     = img.name;
         el.loading = 'lazy';
         el.addEventListener('click', () => openLightbox(img.src, img.name));
 
+        const badge = document.createElement('span');
+        badge.className   = 'avail-label ' + img.subdir;
+        badge.textContent = img.available ? 'Available' : 'Unavailable';
+
         item.appendChild(el);
+        item.appendChild(badge);
         galleryEl.appendChild(item);
       });
     })

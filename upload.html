@@ -20,6 +20,13 @@
       color: var(--accent);
     }
 
+    .manage-grid .grid-hint {
+      grid-column: 1 / -1;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: -0.5rem;
+    }
+
     .manage-item {
       position: relative;
     }
@@ -54,6 +61,40 @@
     .delete-btn:hover {
       background: #cc3333;
     }
+
+    .status-btn {
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+      height: 20px;
+      padding: 0 7px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.62rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      line-height: 20px;
+      white-space: nowrap;
+    }
+
+    .status-btn.available {
+      background: rgba(74, 140, 74, 0.85);
+      color: #fff;
+    }
+
+    .status-btn.available:hover {
+      background: rgba(50, 110, 50, 0.95);
+    }
+
+    .status-btn.unavailable {
+      background: rgba(90, 90, 90, 0.75);
+      color: #eee;
+    }
+
+    .status-btn.unavailable:hover {
+      background: rgba(60, 60, 60, 0.9);
+    }
   </style>
 </head>
 <body>
@@ -79,6 +120,13 @@
         <input type="file" id="photo" name="photo" accept="image/*" capture="environment" required>
       </div>
       <div class="field">
+        <label>Availability</label>
+        <div class="toggle-group">
+          <label><input type="radio" name="status" value="available" checked><span>Available</span></label>
+          <label><input type="radio" name="status" value="unavailable"><span>Unavailable</span></label>
+        </div>
+      </div>
+      <div class="field">
         <label for="password">Password</label>
         <input type="password" id="password" name="password" autocomplete="current-password" required>
       </div>
@@ -86,7 +134,8 @@
     </form>
 
     <div class="manage-grid" id="manage-grid" style="display:none">
-      <h3>Your photos — tap &times; to delete</h3>
+      <h3>Your photos</h3>
+      <p class="grid-hint">Tap &times; to delete &middot; tap the coloured label to toggle availability</p>
     </div>
   </div>
 </main>
@@ -142,7 +191,6 @@
     fetch('gallery.php')
       .then((r) => r.json())
       .then((images) => {
-        // Remove old thumbnails but keep the heading
         manageGrid.querySelectorAll('.manage-item').forEach((el) => el.remove());
 
         if (!images.length) {
@@ -167,8 +215,17 @@
           del.title       = 'Delete ' + img.name;
           del.addEventListener('click', () => deletePhoto(img, item));
 
+          const statusBtn = document.createElement('button');
+          statusBtn.className = 'status-btn ' + img.subdir;
+          statusBtn.textContent = img.available ? 'Available' : 'Unavailable';
+          statusBtn.title = img.available
+            ? 'Click to mark as Unavailable'
+            : 'Click to mark as Available';
+          statusBtn.addEventListener('click', () => toggleStatus(img, statusBtn));
+
           item.appendChild(thumb);
           item.appendChild(del);
+          item.appendChild(statusBtn);
           manageGrid.appendChild(item);
         });
       });
@@ -184,10 +241,10 @@
 
     if (!confirm('Delete this photo?')) return;
 
-    const filename = img.src.replace('images/', '');
-    const data     = new FormData();
+    const data = new FormData();
     data.append('password', password);
-    data.append('filename', filename);
+    data.append('filename', img.filename);
+    data.append('subdir',   img.subdir);
 
     try {
       const res  = await fetch('delete.php', { method: 'POST', body: data });
@@ -204,7 +261,43 @@
     }
   }
 
-  // Show the grid once the password field has been filled and user leaves it
+  async function toggleStatus(img, btnEl) {
+    const password = pwdField.value;
+    if (!password) {
+      showMessage('Enter your password first, then change availability.', 'error');
+      pwdField.focus();
+      return;
+    }
+
+    const newSubdir = img.subdir === 'available' ? 'unavailable' : 'available';
+
+    const data = new FormData();
+    data.append('password', password);
+    data.append('filename', img.filename);
+    data.append('from',     img.subdir);
+    data.append('to',       newSubdir);
+
+    try {
+      const res  = await fetch('move.php', { method: 'POST', body: data });
+      const json = await res.json();
+      if (json.ok) {
+        img.subdir    = newSubdir;
+        img.available = newSubdir === 'available';
+        img.src       = 'images/' + newSubdir + '/' + img.filename;
+
+        btnEl.className   = 'status-btn ' + newSubdir;
+        btnEl.textContent = img.available ? 'Available' : 'Unavailable';
+        btnEl.title       = img.available
+          ? 'Click to mark as Unavailable'
+          : 'Click to mark as Available';
+      } else {
+        showMessage(json.message || 'Could not update status.', 'error');
+      }
+    } catch {
+      showMessage('Network error — please try again.', 'error');
+    }
+  }
+
   pwdField.addEventListener('change', () => {
     if (pwdField.value) loadManageGrid();
   });
