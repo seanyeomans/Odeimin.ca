@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Odeimin — Art by Christine</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+  <h1><a href="index.html">Odeimin</a></h1>
+  <nav>
+    <a href="index.html" class="active">Gallery</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div id="gallery" class="gallery"></div>
+  <p id="empty" class="empty" style="display:none">No photos yet — check back soon.</p>
+</main>
+
+<div id="lightbox">
+  <button id="lightbox-close" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<footer>
+  <p>&copy; <span id="year"></span> odeimin.ca</p>
+</footer>
+
+<script src="js/gallery.js"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
