@@ -1,9 +1,5 @@
 <?php
-// ── Configuration ────────────────────────────────────────────────
-define('UPLOAD_PASSWORD', 'CHANGE_ME');   // <-- set your password here
-define('MAX_SIZE_MB',     20);
-define('IMAGES_DIR',      __DIR__ . '/images/');
-// ─────────────────────────────────────────────────────────────────
+require_once __DIR__ . '/config.php';
 
 header('Content-Type: application/json');
 header('Cache-Control: no-store');

@@ -1,8 +1,5 @@
 <?php
-// ── Configuration ────────────────────────────────────────────────
-define('UPLOAD_PASSWORD', 'CHANGE_ME');   // must match upload.php
-define('IMAGES_DIR',      __DIR__ . '/images/');
-// ─────────────────────────────────────────────────────────────────
+require_once __DIR__ . '/config.php';
 
 header('Content-Type: application/json');
 header('Cache-Control: no-store');
