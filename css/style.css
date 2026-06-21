@@ -82,6 +82,7 @@ main {
   margin-bottom: 1.25rem;
   overflow: hidden;
   background: var(--border);
+  border-radius: .6em;
 }
 
 .avail-label {
@@ -225,6 +226,7 @@ main {
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
   user-select: none;
+  margin-bottom: 0;
 }
 
 .toggle-group label:not(:last-child) {

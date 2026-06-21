@@ -95,6 +95,14 @@
     .status-btn.unavailable:hover {
       background: rgba(60, 60, 60, 0.9);
     }
+
+    .session-indicator {
+      color: #4a8c4a;
+      font-size: 0.75rem;
+      font-style: italic;
+      font-weight: normal;
+      letter-spacing: 0;
+    }
   </style>
 </head>
 <body>
@@ -127,7 +135,7 @@
         </div>
       </div>
       <div class="field">
-        <label for="password">Password</label>
+        <label for="password">Password <span id="session-indicator" class="session-indicator" style="display:none">· session active</span></label>
         <input type="password" id="password" name="password" autocomplete="current-password" required>
       </div>
       <button type="submit" class="btn" id="submit-btn">Upload</button>
@@ -152,7 +160,53 @@
   const btn        = document.getElementById('submit-btn');
   const pwdField   = document.getElementById('password');
   const manageGrid = document.getElementById('manage-grid');
+  const sessionIndicator = document.getElementById('session-indicator');
 
+  // ── Session management ───────────────────────────────────────────
+  const SESSION_TIMEOUT = 15 * 60 * 1000; // 15 minutes
+  let inactivityTimer = null;
+
+  function saveSession(password) {
+    sessionStorage.setItem('odeimin_pwd', password);
+    resetTimer();
+    sessionIndicator.style.display = '';
+  }
+
+  function resetTimer() {
+    clearTimeout(inactivityTimer);
+    localStorage.setItem('odeimin_last_activity', Date.now().toString());
+    inactivityTimer = setTimeout(expireSession, SESSION_TIMEOUT);
+  }
+
+  function expireSession() {
+    sessionStorage.removeItem('odeimin_pwd');
+    localStorage.removeItem('odeimin_last_activity');
+    pwdField.value = '';
+    sessionIndicator.style.display = 'none';
+    showMessage('Session expired — please enter your password again.', 'error');
+  }
+
+  function restoreSession() {
+    const last = parseInt(localStorage.getItem('odeimin_last_activity') || '0');
+    if (Date.now() - last >= SESSION_TIMEOUT) return;
+    const pwd = sessionStorage.getItem('odeimin_pwd');
+    if (!pwd) return;
+    pwdField.value = pwd;
+    sessionIndicator.style.display = '';
+    resetTimer();
+  }
+
+  function requirePassword() {
+    const password = pwdField.value;
+    if (!password) {
+      showMessage('Enter your password first.', 'error');
+      pwdField.focus();
+      return null;
+    }
+    return password;
+  }
+
+  // ── Messages ─────────────────────────────────────────────────────
   function showMessage(text, type) {
     msg.textContent   = text;
     msg.className     = 'message ' + type;
@@ -162,6 +216,9 @@
   // ── Upload ──────────────────────────────────────────────────────
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const password = requirePassword();
+    if (!password) return;
+
     btn.disabled    = true;
     btn.textContent = 'Uploading…';
     msg.style.display = 'none';
@@ -171,9 +228,10 @@
       const res  = await fetch('upload.php', { method: 'POST', body: data });
       const json = await res.json();
       if (json.ok) {
+        saveSession(password);
         showMessage('Photo uploaded!', 'success');
         form.reset();
-        pwdField.value = data.get('password'); // keep password filled
+        pwdField.value = password;
         loadManageGrid();
       } else {
         showMessage(json.message || 'Upload failed.', 'error');
@@ -216,9 +274,9 @@
           del.addEventListener('click', () => deletePhoto(img, item));
 
           const statusBtn = document.createElement('button');
-          statusBtn.className = 'status-btn ' + img.subdir;
+          statusBtn.className   = 'status-btn ' + img.subdir;
           statusBtn.textContent = img.available ? 'Available' : 'Unavailable';
-          statusBtn.title = img.available
+          statusBtn.title       = img.available
             ? 'Click to mark as Unavailable'
             : 'Click to mark as Available';
           statusBtn.addEventListener('click', () => toggleStatus(img, statusBtn));
@@ -232,13 +290,8 @@
   }
 
   async function deletePhoto(img, itemEl) {
-    const password = pwdField.value;
-    if (!password) {
-      showMessage('Enter your password first, then delete.', 'error');
-      pwdField.focus();
-      return;
-    }
-
+    const password = requirePassword();
+    if (!password) return;
     if (!confirm('Delete this photo?')) return;
 
     const data = new FormData();
@@ -250,6 +303,7 @@
       const res  = await fetch('delete.php', { method: 'POST', body: data });
       const json = await res.json();
       if (json.ok) {
+        saveSession(password);
         itemEl.remove();
         const remaining = manageGrid.querySelectorAll('.manage-item');
         if (!remaining.length) manageGrid.style.display = 'none';
@@ -262,12 +316,8 @@
   }
 
   async function toggleStatus(img, btnEl) {
-    const password = pwdField.value;
-    if (!password) {
-      showMessage('Enter your password first, then change availability.', 'error');
-      pwdField.focus();
-      return;
-    }
+    const password = requirePassword();
+    if (!password) return;
 
     const newSubdir = img.subdir === 'available' ? 'unavailable' : 'available';
 
@@ -281,6 +331,7 @@
       const res  = await fetch('move.php', { method: 'POST', body: data });
       const json = await res.json();
       if (json.ok) {
+        saveSession(password);
         img.subdir    = newSubdir;
         img.available = newSubdir === 'available';
         img.src       = 'images/' + newSubdir + '/' + img.filename;
@@ -298,10 +349,8 @@
     }
   }
 
-  pwdField.addEventListener('change', () => {
-    if (pwdField.value) loadManageGrid();
-  });
-
+  // ── Init ─────────────────────────────────────────────────────────
+  restoreSession();
   loadManageGrid();
 </script>
 </body>
