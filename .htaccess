@@ -1,3 +1,9 @@
+# Never serve dotfiles (.env, .gitignore, etc.). Apache only blocks
+# .htaccess/.htpasswd by default; everything else needs this rule.
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
 RewriteEngine On
 
 RewriteCond %{REQUEST_FILENAME} -f [OR]
