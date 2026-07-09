@@ -3,4 +3,8 @@
 
 # Uploaded images — managed on the server, not in the repo
 images/
-logs/
+
+# Runtime logs — server-generated, but keep the .htaccess that blocks
+# web access to them
+logs/*
+!logs/.htaccess
