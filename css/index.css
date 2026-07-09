@@ -1,0 +1,148 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-btn {
+  padding: 0.35rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.filter-btn:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.gallery {
+  columns: 3 280px;
+  column-gap: 1.25rem;
+}
+
+.gallery-item {
+  position: relative;
+  break-inside: avoid;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+  background: var(--border);
+  border-radius: .6em;
+}
+
+.avail-label {
+  position: absolute;
+  bottom: 0.45rem;
+  right: 0.45rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  pointer-events: none;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.avail-label.available {
+  background: rgba(74, 140, 74, 0.82);
+  color: #fff;
+}
+
+.avail-label.unavailable {
+  background: rgba(30, 30, 30, 0.52);
+  color: #ddd;
+}
+
+.cat-label {
+  position: absolute;
+  bottom: 0.45rem;
+  left: 0.45rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  pointer-events: none;
+  font-family: Georgia, 'Times New Roman', serif;
+  background: rgba(122, 106, 90, 0.82);
+  color: #fff;
+}
+
+.gallery-item img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: opacity 0.3s;
+}
+
+.gallery-item img:hover {
+  opacity: 0.92;
+}
+
+#lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+#lightbox.open {
+  display: flex;
+}
+
+#lightbox img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.6);
+}
+
+#lightbox-close {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.5rem;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  line-height: 1;
+  opacity: 0.7;
+  background: none;
+  border: none;
+}
+
+#lightbox-close:hover {
+  opacity: 1;
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 4rem 0;
+  font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+  .gallery {
+    columns: 2 140px;
+    column-gap: 0.75rem;
+  }
+
+  .gallery-item {
+    margin-bottom: 0.75rem;
+  }
+}

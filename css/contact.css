@@ -1,0 +1,12 @@
+.field textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--text);
+  resize: vertical;
+  min-height: 140px;
+  border-radius: 0;
+}

@@ -1,0 +1,16 @@
+.about-content {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.about-content h2 {
+  font-size: 1.3rem;
+  font-weight: normal;
+  margin-bottom: 1.25rem;
+  color: var(--accent);
+}
+
+.about-content p {
+  margin-bottom: 1.25rem;
+  color: #333;
+}

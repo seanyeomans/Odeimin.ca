@@ -1,0 +1,19 @@
+services:
+  web:
+    image: php:8.3-apache
+    container_name: odeimin-web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+    command: >
+      sh -lc "
+      a2enmod rewrite >/dev/null;
+      sed -ri 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf;
+      printf 'upload_max_filesize=21M\npost_max_size=22M\ndisplay_errors=Off\nlog_errors=On\n' > /usr/local/etc/php/conf.d/odeimin.ini;
+      mkdir -p /var/www/html/images/available /var/www/html/images/unavailable;
+      chown -R www-data:www-data /var/www/html/images 2>/dev/null || true;
+      apache2-foreground
+      "
+    restart: unless-stopped

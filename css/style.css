@@ -73,120 +73,6 @@ main {
   padding: 2.5rem 1.5rem 4rem;
 }
 
-/* ── Gallery masonry ── */
-.gallery {
-  columns: 3 280px;
-  column-gap: 1.25rem;
-}
-
-.gallery-item {
-  position: relative;
-  break-inside: avoid;
-  margin-bottom: 1.25rem;
-  overflow: hidden;
-  background: var(--border);
-  border-radius: .6em;
-}
-
-.avail-label {
-  position: absolute;
-  bottom: 0.45rem;
-  right: 0.45rem;
-  font-size: 0.62rem;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  padding: 0.15rem 0.5rem;
-  pointer-events: none;
-  font-family: Georgia, 'Times New Roman', serif;
-}
-
-.avail-label.available {
-  background: rgba(74, 140, 74, 0.82);
-  color: #fff;
-}
-
-.avail-label.unavailable {
-  background: rgba(30, 30, 30, 0.52);
-  color: #ddd;
-}
-
-.gallery-item img {
-  display: block;
-  width: 100%;
-  height: auto;
-  transition: opacity 0.3s;
-}
-
-.gallery-item img:hover {
-  opacity: 0.92;
-}
-
-/* ── Lightbox ── */
-#lightbox {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.88);
-  z-index: 100;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-#lightbox.open {
-  display: flex;
-}
-
-#lightbox img {
-  max-width: 90vw;
-  max-height: 90vh;
-  object-fit: contain;
-  box-shadow: 0 4px 40px rgba(0,0,0,0.6);
-}
-
-#lightbox-close {
-  position: fixed;
-  top: 1.25rem;
-  right: 1.5rem;
-  color: #fff;
-  font-size: 2rem;
-  cursor: pointer;
-  line-height: 1;
-  opacity: 0.7;
-  background: none;
-  border: none;
-}
-
-#lightbox-close:hover {
-  opacity: 1;
-}
-
-/* ── Empty state ── */
-.empty {
-  text-align: center;
-  color: var(--muted);
-  padding: 4rem 0;
-  font-size: 1rem;
-}
-
-/* ── About page ── */
-.about-content {
-  max-width: 640px;
-  margin: 0 auto;
-}
-
-.about-content h2 {
-  font-size: 1.3rem;
-  font-weight: normal;
-  margin-bottom: 1.25rem;
-  color: var(--accent);
-}
-
-.about-content p {
-  margin-bottom: 1.25rem;
-  color: #333;
-}
-
 /* ── Upload page ── */
 .upload-form {
   max-width: 480px;
@@ -247,7 +133,8 @@ main {
 
 .field input[type="password"],
 .field input[type="file"],
-.field input[type="text"] {
+.field input[type="text"],
+.field select {
   width: 100%;
   padding: 0.65rem 0.75rem;
   border: 1px solid var(--border);
@@ -261,6 +148,11 @@ main {
 
 .field input[type="file"] {
   padding: 0.5rem;
+  cursor: pointer;
+}
+
+.field select {
+  appearance: auto;
   cursor: pointer;
 }
 
@@ -334,12 +226,4 @@ footer {
     padding: 1.5rem 1rem 3rem;
   }
 
-  .gallery {
-    columns: 2 140px;
-    column-gap: 0.75rem;
-  }
-
-  .gallery-item {
-    margin-bottom: 0.75rem;
-  }
 }

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/auth.php';
 
 header('Content-Type: application/json');
 header('Cache-Control: no-store');
@@ -13,10 +13,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     respond(false, 'Method not allowed.');
 }
 
-// Auth
-$password = trim($_POST['password'] ?? '');
-if (!hash_equals(UPLOAD_PASSWORD, $password)) {
-    respond(false, 'Incorrect password.');
+odeimin_require_admin();
+
+// When the request body exceeds post_max_size, PHP silently discards both
+// $_POST and $_FILES — detect that and report it as a size problem.
+$contentLength = (int)($_SERVER['CONTENT_LENGTH'] ?? 0);
+if ($contentLength > 0 && empty($_FILES) && empty($_POST)) {
+    respond(false, 'File too large (max ' . MAX_SIZE_MB . ' MB).');
 }
 
 // File present?
@@ -71,6 +74,12 @@ if (!in_array($status, ['available', 'unavailable'], true)) {
     $status = 'available';
 }
 
+// Category — must be one of the configured slugs
+$category = $_POST['category'] ?? '';
+if (!odeimin_is_valid_category($category)) {
+    respond(false, 'Please choose a valid category.');
+}
+
 // Build a clean, unique filename
 $original  = pathinfo($file['name'], PATHINFO_FILENAME);
 $safe      = preg_replace('/[^a-zA-Z0-9_-]/', '_', $original);
@@ -78,18 +87,35 @@ $safe      = substr($safe, 0, 60);
 $timestamp = date('Ymd_His');
 $filename  = $timestamp . '_' . $safe . '.' . $ext;
 
-$uploadDir = IMAGES_DIR . $status . '/';
+$uploadDir = IMAGES_DIR . $status . '/' . $category . '/';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
 
+// Avoid silently overwriting when two uploads land in the same second
+// with the same name (possible during a multi-file batch)
 $dest = $uploadDir . $filename;
+$n = 1;
+while (file_exists($dest)) {
+    $filename = $timestamp . '_' . $safe . '-' . $n . '.' . $ext;
+    $dest = $uploadDir . $filename;
+    $n++;
+}
 
 if (!move_uploaded_file($file['tmp_name'], $dest)) {
     respond(false, 'Could not save file. Check server permissions.');
 }
 
-respond(true, 'Uploaded successfully.', [
-    'file'   => 'images/' . $status . '/' . $filename,
+odeimin_append_audit_log('photo_uploaded', [
+    'filename' => $filename,
     'subdir' => $status,
+    'category' => $category,
+    'mime' => $mime,
+    'size' => (int)$file['size'],
+]);
+
+respond(true, 'Uploaded successfully.', [
+    'file'     => 'images/' . $status . '/' . $category . '/' . $filename,
+    'subdir'   => $status,
+    'category' => $category,
 ]);
