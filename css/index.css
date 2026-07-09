@@ -128,6 +128,20 @@
   object-fit: contain;
   border-radius: 8px;
   box-shadow: var(--shadow-lg);
+  cursor: zoom-in;
+  will-change: transform;
+}
+
+#lightbox img.zoom-anim {
+  transition: transform 0.22s ease;
+}
+
+#lightbox.zoomed img {
+  cursor: grab;
+}
+
+#lightbox.zoomed.dragging img {
+  cursor: grabbing;
 }
 
 #lightbox-close {
