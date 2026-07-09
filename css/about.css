@@ -4,13 +4,19 @@
 }
 
 .about-content h2 {
-  font-size: 1.3rem;
-  font-weight: normal;
-  margin-bottom: 1.25rem;
-  color: var(--accent);
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  color: var(--accent-dark);
 }
 
 .about-content p {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  line-height: 1.8;
   margin-bottom: 1.25rem;
-  color: #333;
+  color: #3a3a3c;
+}
+
+:root[data-theme="dark"] .about-content p {
+  color: #cfc9c2;
 }

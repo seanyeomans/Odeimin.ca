@@ -2,20 +2,22 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
 .filter-btn {
-  padding: 0.35rem 1rem;
+  min-height: 38px;
+  padding: 0.4rem 1.1rem;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: none;
+  background: var(--surface);
   color: var(--muted);
   font-size: 0.85rem;
   font-family: inherit;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  box-shadow: var(--shadow-sm);
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
 }
 
 .filter-btn:hover {
@@ -29,6 +31,11 @@
   color: #fff;
 }
 
+.filter-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-sm), var(--focus-ring);
+}
+
 .gallery {
   columns: 3 280px;
   column-gap: 1.25rem;
@@ -40,61 +47,71 @@
   margin-bottom: 1.25rem;
   overflow: hidden;
   background: var(--border);
-  border-radius: .6em;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
 }
 
-.avail-label {
-  position: absolute;
-  bottom: 0.45rem;
-  right: 0.45rem;
-  font-size: 0.62rem;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  padding: 0.15rem 0.5rem;
-  pointer-events: none;
-  font-family: Georgia, 'Times New Roman', serif;
-}
-
-.avail-label.available {
-  background: rgba(74, 140, 74, 0.82);
-  color: #fff;
-}
-
-.avail-label.unavailable {
-  background: rgba(30, 30, 30, 0.52);
-  color: #ddd;
-}
-
-.cat-label {
-  position: absolute;
-  bottom: 0.45rem;
-  left: 0.45rem;
-  font-size: 0.62rem;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  padding: 0.15rem 0.5rem;
-  pointer-events: none;
-  font-family: Georgia, 'Times New Roman', serif;
-  background: rgba(122, 106, 90, 0.82);
-  color: #fff;
+.gallery-item:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
 }
 
 .gallery-item img {
   display: block;
   width: 100%;
   height: auto;
-  transition: opacity 0.3s;
+  cursor: pointer;
 }
 
-.gallery-item img:hover {
-  opacity: 0.92;
+.avail-label,
+.cat-label {
+  position: absolute;
+  bottom: 0.5rem;
+  font-size: 0.62rem;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.avail-label {
+  right: 0.5rem;
+}
+
+.avail-label.available {
+  background: rgba(74, 140, 74, 0.75);
+  color: #fff;
+}
+
+.avail-label.unavailable {
+  background: rgba(30, 30, 30, 0.5);
+  color: #eee;
+}
+
+.cat-label {
+  left: 0.5rem;
+  background: rgba(250, 249, 247, 0.72);
+  color: #5e5047;
+}
+
+:root[data-theme="dark"] .cat-label {
+  background: rgba(38, 35, 32, 0.72);
+  color: #d8cdbf;
 }
 
 #lightbox {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.88);
+  background: rgba(20, 20, 20, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   z-index: 100;
   align-items: center;
   justify-content: center;
@@ -106,27 +123,36 @@
 }
 
 #lightbox img {
-  max-width: 90vw;
+  max-width: 92vw;
   max-height: 90vh;
   object-fit: contain;
-  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
 }
 
 #lightbox-close {
   position: fixed;
-  top: 1.25rem;
-  right: 1.5rem;
+  top: 1rem;
+  right: 1rem;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #fff;
-  font-size: 2rem;
+  font-size: 1.6rem;
   cursor: pointer;
   line-height: 1;
-  opacity: 0.7;
-  background: none;
+  background: rgba(255, 255, 255, 0.14);
   border: none;
+  border-radius: 50%;
+  opacity: 0.85;
+  transition: opacity 0.18s ease, background 0.18s ease;
 }
 
 #lightbox-close:hover {
   opacity: 1;
+  background: rgba(255, 255, 255, 0.24);
 }
 
 .empty {
@@ -144,5 +170,10 @@
 
   .gallery-item {
     margin-bottom: 0.75rem;
+    border-radius: 10px;
+  }
+
+  .filters {
+    margin-bottom: 1.25rem;
   }
 }
