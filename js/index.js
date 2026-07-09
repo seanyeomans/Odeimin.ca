@@ -5,6 +5,7 @@
   var lightbox = document.getElementById('lightbox');
   var lbImg = document.getElementById('lightbox-img');
   var lbClose = document.getElementById('lightbox-close');
+  var lbContact = document.getElementById('lightbox-contact');
 
   // --- Lightbox zoom (desktop: wheel to zoom, drag to pan, double-click
   // to toggle; touch devices keep native pinch-zoom) -----------------------
@@ -53,6 +54,7 @@
   function openLightbox(src, alt) {
     lbImg.src = src;
     lbImg.alt = alt;
+    lbContact.href = '/contact?piece=' + encodeURIComponent(src);
     resetZoom(false);
     lightbox.classList.add('open');
     document.body.style.overflow = 'hidden';

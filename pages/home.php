@@ -5,4 +5,5 @@
 <div id="lightbox">
   <button id="lightbox-close" aria-label="Close">&times;</button>
   <img id="lightbox-img" src="" alt="">
+  <a id="lightbox-contact" href="/contact">Ask about this piece</a>
 </div>

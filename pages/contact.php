@@ -4,6 +4,15 @@
   <div id="message" class="message" style="display:none"></div>
 
   <form id="contact-form">
+    <div class="field" id="piece-ref" style="display:none">
+      <label>About this piece</label>
+      <div class="piece-card">
+        <img id="piece-thumb" src="" alt="">
+        <span id="piece-name"></span>
+        <button type="button" id="piece-remove" aria-label="Remove piece reference">&times;</button>
+      </div>
+      <input type="hidden" name="piece" id="piece-input">
+    </div>
     <div class="field">
       <label for="name">Name</label>
       <input type="text" id="name" name="name" autocomplete="name" required>

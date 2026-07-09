@@ -32,10 +32,21 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 $name    = str_replace(["\r", "\n"], '', $name);
 $email   = str_replace(["\r", "\n"], '', $email);
 
+// Optional gallery-piece reference from the "Ask about this piece" link.
+// Only pass through paths that look like our own gallery images.
+$piece = trim($_POST['piece'] ?? '');
+$piece = str_replace(["\r", "\n"], '', $piece);
+if (!preg_match('#^images/(available|unavailable)/[^?\#\\\\]{1,180}\.(jpe?g|png|gif|webp)$#i', $piece)) {
+    $piece = '';
+}
+
 $subject = SUBJECT_PREFIX . $name;
 
 $body  = "Name: $name\n";
 $body .= "Email: $email\n\n";
+if ($piece !== '') {
+    $body .= "Regarding piece: https://odeimin.ca/$piece\n\n";
+}
 $body .= "Message:\n$message\n";
 
 $headers  = "From: noreply@odeimin.ca\r\n";
